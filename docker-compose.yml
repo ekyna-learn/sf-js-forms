@@ -1,0 +1,36 @@
+version: '3.7'
+
+volumes:
+    database:
+        external:
+            name: "sf-js-forms-db"
+
+services:
+    db:
+        image: mysql:8.0
+        command: --default-authentication-plugin=mysql_native_password
+        ports:
+            - "3306:3306"
+        volumes:
+            - database:/var/lib/mysql
+        env_file:
+            - .env.local
+    php:
+        build: ./docker/php
+        ports:
+            - "9000:9001"
+        volumes:
+            - .:/var/www/symfony:cached
+        links:
+            - db
+        extra_hosts:
+            - "docker-host.localhost:127.0.0.1"
+    nginx:
+        build: ./docker/nginx
+        ports:
+            - "80:80"
+        links:
+            - php
+        volumes:
+            - ./var/log/nginx:/var/log/nginx:cached
+            - ./:/var/www/symfony:cached
