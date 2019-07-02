@@ -19,7 +19,6 @@ npm-debug.log
 
 ###> symfony/phpunit-bridge ###
 .phpunit
-/bin/phpunit
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
