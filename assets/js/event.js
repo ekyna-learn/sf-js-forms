@@ -3,7 +3,7 @@ import $ from 'jquery';
 let $country = $('select[name="event[country]"]'),
     $city = $('select[name="event[city]"]');
 
-$country.on('change', function() {
+function onCountryChange() {
     let xhr = $.getJSON('/city/choices', {
         countryId: $country.val(),
     });
@@ -22,4 +22,8 @@ $country.on('change', function() {
 
         $city.prop('disabled', false);
     });
-});
+}
+
+$country.on('change', onCountryChange);
+
+onCountryChange();

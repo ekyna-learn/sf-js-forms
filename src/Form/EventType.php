@@ -75,22 +75,18 @@ class EventType extends AbstractType
 
     private function addCityForm(FormInterface $form, Country $country = null)
     {
-        $form
-            ->add('city', EntityType::class, [
-                'class'         => City::class,
-                'query_builder' => function (EntityRepository $repository) use ($country) {
-                    $qb = $repository->createQueryBuilder('c');
-                    $qb->addOrderBy('c.name', 'ASC');
+        $form->add('city', EntityType::class, [
+            'class'         => City::class,
+            'query_builder' => function (EntityRepository $repository) use ($country) {
+                $qb = $repository->createQueryBuilder('c');
+                $qb
+                    ->andWhere($qb->expr()->eq('c.country', ':country'))
+                    ->addOrderBy('c.name', 'ASC')
+                    ->setParameter('country', $country);
 
-                    if ($country) {
-                        $qb
-                            ->andWhere($qb->expr()->eq('c.country', ':country'))
-                            ->setParameter('country', $country);
-                    }
-
-                    return $qb;
-                },
-            ]);
+                return $qb;
+            },
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

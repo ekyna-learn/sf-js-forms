@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  */
@@ -18,12 +20,14 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Assert\NotNull
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\City")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull
      */
     private $city;
 
