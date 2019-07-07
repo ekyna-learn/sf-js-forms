@@ -34,7 +34,13 @@ class EventType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name');
+        $builder
+            ->add('name')
+            ->add('schedules', CollectionType::class, [
+                'entry_type'   => ScheduleType::class,
+                'allow_add'    => true,
+                'allow_delete' => true,
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();

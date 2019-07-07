@@ -15,6 +15,16 @@
                 <th>Name</th>
                 <td>{{ event.name }}</td>
             </tr>
+            <tr>
+                <th>Schedules</th>
+                <td>
+                    {% for schedule in event.schedules %}
+                    {{ schedule.date|date('d/m/Y') }}<br>
+                    {% else %}
+                    <em>No schedules</em>
+                    {% endfor %}
+                </td>
+            </tr>
         </tbody>
     </table>
 

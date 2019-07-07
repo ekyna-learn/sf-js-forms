@@ -1,0 +1,106 @@
+{%- block app_collection_widget -%}
+    {%- if form.vars.button_col >= 2 -%}
+        {%- set controls_class = 'btn-group' -%}
+    {%- else -%}
+        {%- set controls_class = 'btn-group-vertical' -%}
+    {%- endif -%}
+    {%- set attr = attr|merge({'class': 'app-collection' }) -%}
+    {%- if prototype is defined -%}
+        {%- set prototype_vars = {} -%}
+        {%- if style is defined -%}
+            {%- set prototype_vars = prototype_vars|merge({'style': style}) -%}
+        {%- endif -%}
+        {%- set prototype_html =
+            '<div class="col-xs-' ~ form.vars.sub_widget_col ~ ' app-collection-child-form">' ~
+                form_widget(prototype, prototype_vars) ~
+            '</div>'
+        -%}
+        {%- set controls = '' -%}
+        {%- set delete_button_confirm = '' -%}
+        {%- if form.vars.delete_button_confirm is not same as(null) -%}
+            {%- set delete_button_confirm = ' data-confirm="' ~ (form.vars.delete_button_confirm|trans|escape) ~ '"' -%}
+        {%- endif -%}
+        {%- if form.vars.allow_delete or form.vars.allow_sort -%}
+            {# Move up button #}
+            {%- if form.vars.allow_sort %}{% set controls = controls ~
+                '<button type="button" class="btn btn-default btn-xs" data-collection-role="move-up" ' ~
+                    'data-collection="' ~ form.vars.id ~ '" data-field="__id__">' ~
+                    '<i class="fas fa-angle-up"></i>' ~
+                '</button>'
+            %}{% endif -%}
+            {# Remove button #}
+            {%- if form.vars.allow_delete %}{% set controls = controls ~
+                '<button type="button" class="btn btn-danger btn-xs" data-collection-role="remove" ' ~
+                    'data-collection="' ~ form.vars.id ~ '" data-field="__id__"' ~ delete_button_confirm ~ '>' ~
+                    '<i class="fas fa-times"></i>' ~
+                '</button>'
+            %}{%- endif -%}
+            {# Move down button #}
+            {%- if form.vars.allow_sort %}{% set controls = controls ~
+                '<button type="button" class="btn btn-default btn-xs" data-collection-role="move-down" ' ~
+                    'data-collection="' ~ form.vars.id ~ '" data-field="__id__">' ~
+                    '<i class="fas fa-angle-down"></i>' ~
+                '</button>'
+            %}{%- endif -%}
+            {# Controls column #}
+            {%- set controls = '<div class="col-xs-' ~ form.vars.button_col ~ '">' ~
+                '<div class="' ~ controls_class ~ '">' ~ controls ~ '</div>' ~
+                '</div>' -%}
+        {%- endif -%}
+        {%- set prototype_html =
+            '<li class="app-collection-child" id="' ~ prototype.vars.id ~ '"><div class="row">' ~
+                prototype_html ~ controls ~
+            '</div></li>'
+        -%}
+
+        {%- set attr = attr|merge({'data-prototype': form.vars.id ~ '_prototype' }) -%}
+        {%- set attr = attr|merge({'data-prototype-name': prototype_name }) -%}
+
+        <div class="app-collection-prototype" id="{{ form.vars.id }}_prototype">{{ prototype_html }}</div>
+    {%- endif -%}
+    <div {{ block('widget_container_attributes') }}>
+        <ul class="app-collection-child-container list-unstyled">
+            {%- for field in form -%}
+                <li class="app-collection-child" id="{{ field.vars.id }}">
+                    <div class="row">
+                        <div class="col-xs-{{ form.vars.sub_widget_col }} app-collection-child-form">
+                            {{- form_widget(field) -}}
+                            {{- form_errors(field) -}}
+                        </div>
+                        {%- if form.vars.allow_delete or form.vars.allow_sort -%}
+                            <div class="col-xs-{{ form.vars.button_col }}">
+                                <div class="{{ controls_class }}">
+                                    {%- if form.vars.allow_sort -%}
+                                        <button type="button" class="btn btn-default btn-xs" data-collection-role="move-up"
+                                                data-collection="{{ form.vars.id }}" data-field="{{ field.vars.id }}">
+                                            <i class="fas fa-angle-up"></i>
+                                        </button>
+                                    {%- endif -%}
+                                    {%- if form.vars.allow_delete -%}
+                                        <button type="button" class="btn btn-danger btn-xs" data-collection-role="remove"
+                                                data-collection="{{ form.vars.id }}" data-field="{{ field.vars.id }}"
+                                                {{ delete_button_confirm|raw }}>
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    {%- endif -%}
+                                    {%- if form.vars.allow_sort -%}
+                                        <button type="button" class="btn btn-default btn-xs" data-collection-role="move-down"
+                                                data-collection="{{ form.vars.id }}" data-field="{{ field.vars.id }}">
+                                            <i class="fas fa-angle-down"></i>
+                                        </button>
+                                    {%- endif -%}
+                                </div>
+                            </div>
+                        {%- endif -%}
+                    </div>
+                </li>
+            {%- endfor -%}
+        </ul>
+        {%- if form.vars.allow_add -%}
+            <button type="button" class="btn btn-primary btn-xs" data-collection-role="add"
+                    data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">
+                {{- form.vars.add_button_text|trans({}, translation_domain)|raw -}}
+            </button>
+        {%- endif -%}
+    </div>
+{%- endblock app_collection_widget -%}

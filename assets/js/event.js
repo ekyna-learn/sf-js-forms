@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import './collection';
 
 let $country = $('select[name="event[country]"]'),
     $city = $('select[name="event[city]"]');

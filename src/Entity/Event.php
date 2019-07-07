@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,6 +33,21 @@ class Event
      */
     private $city;
 
+    /**
+     * @var ArrayCollection|Schedule[]
+     * @ORM\OneToMany(targetEntity="App\Entity\Schedule", mappedBy="event", orphanRemoval=true, cascade={"persist", "remove"})
+     */
+    private $schedules;
+
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->schedules = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -58,5 +75,30 @@ class Event
         $this->city = $city;
 
         return $this;
+    }
+
+    public function addSchedule(Schedule $schedule): self
+    {
+        if (!$this->schedules->contains($schedule)) {
+            $this->schedules->add($schedule);
+            $schedule->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSchedule(Schedule $schedule): self
+    {
+        if ($this->schedules->contains($schedule)) {
+            $this->schedules->removeElement($schedule);
+            $schedule->setEvent(null);
+        }
+
+        return $this;
+    }
+
+    public function getSchedules(): Collection
+    {
+        return $this->schedules;
     }
 }
